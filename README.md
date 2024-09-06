@@ -20,3 +20,7 @@ Valid flag syntaxes:
 - `-h` - one flag
 - `-h-s` - two flags
 - `-hs` - also two flags, without a delimiter
+
+## Changelog
+1.0 - first version, has reloc from a channel to a thread or from thread to a thread, deleting from both a thread and a channel, ping command for checking whether the bot is working.
+1.1 - now you can reloc from a channel to a channel and from a thread to a channel. README.md now has a changelog.

@@ -19,6 +19,12 @@ async def resend_to(ctx, flags: Flags, thread, message):
         await message.delete()
         await conditional_log(ctx, flags, f"deleted message {message.id}")
 
+def get_parent(thread):
+    if isinstance(thread, discord.Thread):
+        return thread.parent
+    else:
+        return thread
+
 async def reloc(ctx,
                 flags: str | None,
                 thread_name: str | None,
@@ -47,13 +53,14 @@ async def reloc(ctx,
     except:
         await conditional_log(ctx, flags, "Invalid date format.", important=True)
         return
-
-    # Create a new thread
-    if isinstance(ctx.channel, discord.Thread):
-        thread = await ctx.channel.parent.create_thread(name=thread_name, auto_archive_duration=60)
+    
+    channel = get_parent(ctx.channel)
+    if thread_name == "-":
+        thread = channel
+        await conditional_log(ctx, flags, f"Using current channel {channel.mention} as thread.")
     else:
-        thread = await ctx.channel.create_thread(name=thread_name, auto_archive_duration=60)
-    await conditional_log(ctx, flags, f"Created new thread: {thread.mention}")
+        thread = await channel.create_thread(name=thread_name, auto_archive_duration=60)
+        await conditional_log(ctx, flags, f"Created thread {thread.mention}.")
 
     # Fetch messages from the channel
     messages = [message async for message in ctx.channel.history(limit=None, after=start_datetime, before=end_datetime)]
