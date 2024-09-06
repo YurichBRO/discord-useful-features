@@ -5,7 +5,7 @@ With this bot I'm trying to add some of these missing features.
 ## Functionality
 The bot uses classic commands, instead of slash ones, although its prefix is a slash.
 Command syntax is:
-`/command -flags [parameters]`
+`/command -[flags] [parameters]`
 ## Flags
 All flags are written without spaces or any additional symbols except `-`. Flags can be combined. Unknown flags cause the command to be terminated and an error message is sent.
 

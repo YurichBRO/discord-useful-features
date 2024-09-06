@@ -14,7 +14,7 @@ async def delete(ctx,
     except ValueError:
         return
     if flags['help']:
-        await conditional_log(ctx, flags, "Usage: /delete [flags] [start_date] [end_date]", important=True)
+        await conditional_log(ctx, flags, "Usage: `/delete -[flags] [start_date] [end_date]`", important=True)
         return
     if start_date is None or end_date is None:
         await conditional_log(ctx, flags, "Please provide both start and end dates.", important=True)

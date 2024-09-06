@@ -10,7 +10,7 @@ async def ping(ctx, flags: str | None):
     except ValueError:
         return
     if flags['help']:
-        await conditional_log(ctx, flags, "Usage: /ping [flags]", important=True)
+        await conditional_log(ctx, flags, "Usage: `/ping -[flags]`", important=True)
         return
     await conditional_log(ctx, flags, 'pong', important=True)
     await conditional_log(ctx, flags, 'verbose pong')

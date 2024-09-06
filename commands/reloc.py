@@ -38,7 +38,7 @@ async def reloc(ctx,
     except ValueError:
         return
     if flags['help']:
-        await conditional_log(ctx, flags, "Usage: /reloc [flags] [thread_name] [start_date] [end_date]", important=True)
+        await conditional_log(ctx, flags, "Usage: `/reloc -[flags] [thread_name] [start_date] [end_date]`", important=True)
         return
     if thread_name is None:
         await conditional_log(ctx, flags, "Please provide a thread name.", important=True)
