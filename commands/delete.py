@@ -1,3 +1,4 @@
+from discord.ext.commands import param
 from time_parsing import parse_time
 from flags import parse
 from log import conditional_log, flags_missing
@@ -14,7 +15,7 @@ async def delete(ctx,
     except ValueError:
         return
     if flags['help']:
-        await conditional_log(ctx, flags, "Usage: `/delete -[flags] [start_date] [end_date]`", important=True)
+        await conditional_log(ctx, flags, "Usage: `/delete -[flags] start_date end_date`", important=True)
         return
     if start_date is None or end_date is None:
         await conditional_log(ctx, flags, "Please provide both start and end dates.", important=True)
