@@ -4,13 +4,15 @@
         "flags": "a combination of `-` symbols and english lowercase letters",
         "thread_name": "a thread name or `-` symbol that mens parent channel",
         "start_date": "starting date in format YYYY-MM-DD-hh:mm:ss",
-        "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss"
+        "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss",
+        "archive_in": "amount of time in minutes before thread gets auto-archived."
     },
     "logs": {
-        "-h": "Usage: `/reloc -[flags] thread_name start_date end_date`",
+        "-h": "Usage: `/reloc -[flags] thread_name start_date end_date [archive_in]`.\nNote: `archive_in` can be 60, 1440, 4320, 10080 or one of these representations of those: `{60: ['h', '1h', 'hour', '1hour'], 1440: ['d', '1d', 'day', '1day'], 4320: ['3d', '3days', '3day'], 10080: ['7d', '7days', '7day', 'w', 'week', '1week']}`",
         "no-thread": "Please provide a thread name.",
         "no-date": "Please provide both start and end dates.",
         "invalid-date": "Invalid date format.",
+        "invalid-archive-in": "Invalid archive_in value, should be 60, 1440, 4320, 10080",
         "using-channel": "Using current channel {} as thread.",
         "create-thread": "Created thread {}.",
         "fetch": "Fetched {} messages from {} to {}.",
