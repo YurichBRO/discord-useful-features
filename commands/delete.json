@@ -1,0 +1,8 @@
+{
+    "description": "Delete messages from a channel or thread",
+    "params": {
+        "flags": "a combination of `-` symbols and english lowercase letters",
+        "start_date": "starting date in format YYYY-MM-DD-hh:mm:ss",
+        "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss"
+    }
+}

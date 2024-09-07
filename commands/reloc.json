@@ -1,0 +1,9 @@
+{
+    "description": "Relocate messages from a channel to thread, from a thread to a parent channel, from a thread to an another thread",
+    "params": {
+        "flags": "a combination of `-` symbols and english lowercase letters",
+        "thread_name": "a thread name or `-` symbol that mens parent channel",
+        "start_date": "starting date in format YYYY-MM-DD-hh:mm:ss",
+        "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss"
+    }
+}

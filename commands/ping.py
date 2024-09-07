@@ -1,7 +1,15 @@
 from flags import parse
 from log import conditional_log, flags_missing
+from discord.ext.commands import param
+import json
 
-async def ping(ctx, flags: str | None):
+with open('commands/ping.json') as f:
+    __help = json.load(f)
+name = 'ping'
+params = __help['params']
+description = __help['description']
+
+async def func(ctx, flags: str | None = param(description=params['flags'])):
     if flags == None:
         await flags_missing(ctx)
         return

@@ -2,11 +2,18 @@ from discord.ext.commands import param
 from time_parsing import parse_time
 from flags import parse
 from log import conditional_log, flags_missing
+import json
 
-async def delete(ctx,
-                 flags: str | None,
-                 start_date: str | None,
-                 end_date: str | None):
+with open('commands/delete.json') as f:
+    __help = json.load(f)
+name = 'delete'
+params = __help['params']
+description = __help['description']
+
+async def func(ctx,
+                 flags: str | None = param(description=params['flags']),
+                 start_date: str | None = param(description=params['start_date']),
+                 end_date: str | None = param(description=params['end_date'])):
     if flags == None:
         await flags_missing(ctx)
         return

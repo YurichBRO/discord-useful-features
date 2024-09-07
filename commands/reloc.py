@@ -2,6 +2,14 @@ import discord
 from time_parsing import parse_time
 from flags import parse, Flags
 from log import conditional_log, flags_missing
+from discord.ext.commands import param
+import json
+
+with open('commands/reloc.json') as f:
+    __help = json.load(f)
+name = 'reloc'
+params = __help['params']
+description = __help['description']
 
 async def resend_to(ctx, flags: Flags, thread, message):
     content = message.content
@@ -25,11 +33,11 @@ def get_parent(thread):
     else:
         return thread
 
-async def reloc(ctx,
-                flags: str | None,
-                thread_name: str | None,
-                start_date: str | None,
-                end_date: str | None):
+async def func(ctx,
+                flags: str | None = param(description=params['flags']),
+                thread_name: str | None = param(description=params['thread_name']),
+                start_date: str | None = param(description=params['start_date']),
+                end_date: str | None = param(description=params['end_date'])):
     if flags == None:
         await flags_missing(ctx)
         return
