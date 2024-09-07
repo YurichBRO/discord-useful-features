@@ -2,5 +2,8 @@
     "description": "Ping the bot",
     "params": {
         "flags": "a combination of `-` symbols and english lowercase letters"
+    },
+    "logs": {
+        "-h": "Usage: `/ping -[flags]`"
     }
 }

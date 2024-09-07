@@ -1,17 +1,8 @@
 import discord
 from discord.ext import commands
-from datetime import datetime
 from commands import ping, reloc, delete
 from dotenv import load_dotenv
 from os import getenv
-'''
-def commandified(bot, function, **kwargs):
-    bot.command(**kwargs)(function)
-
-def commandify(bot, functions: dict[callable, dict[str, any]]):
-    for function, kwargs in functions.items():
-        commandified(bot, function, **kwargs)
-'''
 
 def commandify(bot, module):
     bot.command(name=module.name, help=module.description)(module.func)

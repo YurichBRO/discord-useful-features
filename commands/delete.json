@@ -4,5 +4,13 @@
         "flags": "a combination of `-` symbols and english lowercase letters",
         "start_date": "starting date in format YYYY-MM-DD-hh:mm:ss",
         "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss"
+    },
+    "logs": {
+        "-h": "Usage: `/delete -[flags] start_date end_date`",
+        "no-date": "Please provide both start and end dates.",
+        "invalid-date": "Invalid date format.",
+        "fetch": "Fetched {} messages from {} to {}.",
+        "delete": "deleted message {}",
+        "finish": "Messages from {} to {} have been deleted."
     }
 }

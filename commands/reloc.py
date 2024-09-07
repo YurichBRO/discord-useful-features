@@ -6,10 +6,11 @@ from discord.ext.commands import param
 import json
 
 with open('commands/reloc.json') as f:
-    __help = json.load(f)
+    __data = json.load(f)
 name = 'reloc'
-params = __help['params']
-description = __help['description']
+params = __data['params']
+description = __data['description']
+logs = __data['logs']
 
 async def resend_to(ctx, flags: Flags, thread, message):
     content = message.content
@@ -46,36 +47,36 @@ async def func(ctx,
     except ValueError:
         return
     if flags['help']:
-        await conditional_log(ctx, flags, "Usage: `/reloc -[flags] thread_name|`-` start_date end_date`", important=True)
+        await conditional_log(ctx, flags, logs['h'], important=True)
         return
     if thread_name is None:
-        await conditional_log(ctx, flags, "Please provide a thread name.", important=True)
+        await conditional_log(ctx, flags, logs['no-thread'], important=True)
         return
     if start_date is None or end_date is None:
-        await conditional_log(ctx, flags, "Please provide both start and end dates.", important=True)
+        await conditional_log(ctx, flags, logs['no-date'], important=True)
         return
     # Convert date strings to datetime objects
     try:
         start_datetime = parse_time(start_date)
         end_datetime = parse_time(end_date)
     except:
-        await conditional_log(ctx, flags, "Invalid date format.", important=True)
+        await conditional_log(ctx, flags, logs['invalid-date'], important=True)
         return
     
     channel = get_parent(ctx.channel)
     if thread_name == "-":
         thread = channel
-        await conditional_log(ctx, flags, f"Using current channel {channel.mention} as thread.")
+        await conditional_log(ctx, flags, logs['using-channel'].format(channel.mention))
     else:
         thread = await channel.create_thread(name=thread_name, auto_archive_duration=60)
-        await conditional_log(ctx, flags, f"Created thread {thread.mention}.")
+        await conditional_log(ctx, flags, logs['create-thread'].format(thread.mention))
 
     # Fetch messages from the channel
     messages = [message async for message in ctx.channel.history(limit=None, after=start_datetime, before=end_datetime)]
-    await conditional_log(ctx, flags, f"Fetched {len(messages)} messages from {start_date} to {end_date}.")
+    await conditional_log(ctx, flags, logs['fetch'].format(len(messages), start_date, end_date))
 
     # Re-send messages in the new thread
     for message in messages:
         await resend_to(ctx, flags, thread, message)
         
-    await conditional_log(ctx, flags, f"Messages from {start_date} to {end_date} have been relocated to the new thread: {thread.mention}")
+    await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date, thread.mention))

@@ -5,10 +5,11 @@ from log import conditional_log, flags_missing
 import json
 
 with open('commands/delete.json') as f:
-    __help = json.load(f)
+    __data = json.load(f)
 name = 'delete'
-params = __help['params']
-description = __help['description']
+params = __data['params']
+description = __data['description']
+logs = __data['logs']
 
 async def func(ctx,
                  flags: str | None = param(description=params['flags']),
@@ -22,26 +23,26 @@ async def func(ctx,
     except ValueError:
         return
     if flags['help']:
-        await conditional_log(ctx, flags, "Usage: `/delete -[flags] start_date end_date`", important=True)
+        await conditional_log(ctx, flags, logs['-h'], important=True)
         return
     if start_date is None or end_date is None:
-        await conditional_log(ctx, flags, "Please provide both start and end dates.", important=True)
+        await conditional_log(ctx, flags, logs['no-date'], important=True)
         return
     # Convert date strings to datetime objects
     try:
         start_datetime = parse_time(start_date)
         end_datetime = parse_time(end_date)
     except ValueError:
-        await conditional_log(ctx, flags, "Invalid date format.", important=True)
+        await conditional_log(ctx, flags, logs['invalid-date'], important=True)
         return
     
     # Fetch messages from the channel
     messages = [message async for message in ctx.channel.history(limit=None, after=start_datetime, before=end_datetime)]
-    await conditional_log(ctx, flags, f"Fetched {len(messages)} messages from {start_date} to {end_date}.")
+    await conditional_log(ctx, flags, logs['fetch'].format(len(messages), start_date, end_date))
     
     # Delete messages
     for message in messages:
         await message.delete()
-        await conditional_log(ctx, flags, f"deleted message {message.id}")
+        await conditional_log(ctx, flags, logs['delete'].format(message.id))
     
-    await conditional_log(ctx, flags, f"Messages from {start_date} to {end_date} have been deleted.")
+    await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date))

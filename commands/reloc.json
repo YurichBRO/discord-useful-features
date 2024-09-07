@@ -5,5 +5,15 @@
         "thread_name": "a thread name or `-` symbol that mens parent channel",
         "start_date": "starting date in format YYYY-MM-DD-hh:mm:ss",
         "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss"
+    },
+    "logs": {
+        "-h": "Usage: `/reloc -[flags] thread_name start_date end_date`",
+        "no-thread": "Please provide a thread name.",
+        "no-date": "Please provide both start and end dates.",
+        "invalid-date": "Invalid date format.",
+        "using-channel": "Using current channel {} as thread.",
+        "create-thread": "Created thread {}.",
+        "fetch": "Fetched {} messages from {} to {}.",
+        "finish": "Messages from {} to {} have been relocated to the new thread: {}"
     }
 }
