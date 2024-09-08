@@ -11,6 +11,7 @@ There are currently 3 commands:
 - `delete`
 - `reloc`
 - `ping`
+- `reloc_id`
 
 For more info on the commands, use:
 `/help [command]` - for description and parameters description
@@ -38,3 +39,5 @@ Valid flag syntaxes:
 1.2 - added help messages for command parameters. Most of log messages are now stored in json files.
 
 1.3 - added `archive_in` parameter to `reloc` command.
+
+1.4 - added `reloc_id` command, now you can relocate individual messages with ease.
