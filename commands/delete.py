@@ -1,8 +1,8 @@
 from discord.ext.commands import param
 from time_parsing import parse_time
-from flags import parse
-from log import conditional_log, flags_missing
+from log import conditional_log
 import json
+from .shared import uses_flags, has_help_flag
 
 with open('commands/delete.json') as f:
     __data = json.load(f)
@@ -11,20 +11,12 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
+@uses_flags
+@has_help_flag(logs['-h'])
 async def func(ctx,
-                 flags: str | None = param(description=params['flags']),
-                 start_date: str | None = param(description=params['start_date']),
-                 end_date: str | None = param(description=params['end_date'])):
-    if flags == None:
-        await flags_missing(ctx)
-        return
-    try:
-        flags = await parse(ctx, flags)
-    except ValueError:
-        return
-    if flags['help']:
-        await conditional_log(ctx, flags, logs['-h'], important=True)
-        return
+               flags: str | None,
+               start_date: str | None = param(description=params['start_date']),
+               end_date: str | None = param(description=params['end_date'])):
     if start_date is None or end_date is None:
         await conditional_log(ctx, flags, logs['no-date'], important=True)
         return

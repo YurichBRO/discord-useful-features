@@ -1,4 +1,4 @@
-async def parse(ctx, flags: str):
+def parse(flags: str):
     parser = Flags()
     for flag in parser.FLAGS:
         parser[parser.FLAGS[flag]] = False
@@ -6,7 +6,6 @@ async def parse(ctx, flags: str):
         if flag == '-':
             continue
         if flag not in parser.FLAGS:
-            await ctx.send(f"Unknown flag: {flag}")
             raise ValueError(f"Unknown flag: {flag}")
         parser[parser.FLAGS[flag]] = True
     return parser

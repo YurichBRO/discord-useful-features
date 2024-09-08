@@ -1,7 +1,8 @@
-from flags import parse
-from log import conditional_log, flags_missing
+from flags import Flags
+from log import conditional_log
 from discord.ext.commands import param
 import json
+from .shared import uses_flags, has_help_flag
 
 with open('commands/ping.json') as f:
     __data = json.load(f)
@@ -10,16 +11,8 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-async def func(ctx, flags: str | None = param(description=params['flags'])):
-    if flags == None:
-        await flags_missing(ctx)
-        return
-    try:
-        flags = await parse(ctx, flags)
-    except ValueError:
-        return
-    if flags['help']:
-        await conditional_log(ctx, flags, logs['-h'], important=True)
-        return
+@uses_flags
+@has_help_flag(logs['-h'])
+async def func(ctx, flags: str | None):
     await conditional_log(ctx, flags, 'pong', important=True)
     await conditional_log(ctx, flags, 'verbose pong')
