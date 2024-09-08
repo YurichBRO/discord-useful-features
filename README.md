@@ -23,4 +23,9 @@ Valid flag syntaxes:
 
 ## Changelog
 1.0 - first version, has reloc from a channel to a thread or from thread to a thread, deleting from both a thread and a channel, ping command for checking whether the bot is working.
+
 1.1 - now you can reloc from a channel to a channel and from a thread to a channel. README.md now has a changelog.
+
+1.2 - added help messages for command parameters. Most of log messages are now stored in json files.
+
+1.3 - added `archive_in` parameter to `reloc` command.
