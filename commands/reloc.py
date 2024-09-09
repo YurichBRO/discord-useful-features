@@ -24,6 +24,7 @@ async def func(ctx, params: dict[str, str], flags: Flags):
     end_date = params.get("end_date", None)
     archive_in = params.get("archive_in", "60")
     title = params.get("title", "true")
+    delete = params.get("delete", "false")
     
     if thread_name is None:
         await conditional_log(ctx, flags, logs['no-thread'], important=True)
@@ -59,6 +60,6 @@ async def func(ctx, params: dict[str, str], flags: Flags):
 
     # Re-send messages in the new thread
     for message in messages:
-        await resend_to(ctx, flags, thread, message, title=title == "true")
+        await resend_to(ctx, flags, thread, message, title=title == "true", delete=delete == "true")
         
     await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date, thread.mention))

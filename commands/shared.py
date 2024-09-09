@@ -43,7 +43,7 @@ def get_parent(thread):
     else:
         return thread
 
-async def resend_to(ctx, flags: Flags, thread, message, title: bool = True):
+async def resend_to(ctx, flags: Flags, thread, message, title: bool = True, delete: bool = True):
     content = message.content
     embeds = message.embeds
     files = [await file.to_file() for file in message.attachments]
@@ -57,6 +57,6 @@ async def resend_to(ctx, flags: Flags, thread, message, title: bool = True):
         files=files
     )
     await conditional_log(ctx, flags, f"relocated message {message.id}")
-    if flags['delete']:
+    if delete:
         await message.delete()
         await conditional_log(ctx, flags, f"deleted message {message.id}")

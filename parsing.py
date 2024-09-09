@@ -77,7 +77,6 @@ def parse_flags(flags: str | None) -> Flags:
 class Flags:
     FLAGS = {
         'h': 'help',
-        'd': 'delete',
         'v': 'verbose',
         's': 'silent',
     }

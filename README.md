@@ -23,7 +23,6 @@ Supported flags:
 - `-h` - help (display help message)
 - `-v` - verbose (display additional info and error messages)
 - `-s` - silent (do not display any info or error messages)
-- `-d` - delete (for commands that manipulate messages, but do not delete old versions of them by default)
 
 Valid flag syntaxes:
 - `-` - no flags, just a placeholder, which is mandatory
