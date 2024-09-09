@@ -8,7 +8,7 @@
     },
     "description": "Relocate specified messages to a new thread or the current channel",
     "logs": {
-        "-h": "Usage: /reloc -[flags] thread_name ids [title] [archive_in]\nNote: `archive_in` can be 60, 1440, 4320, 10080 or one of these representations of those: `{60: ['h', '1h', 'hour', '1hour'], 1440: ['d', '1d', 'day', '1day'], 4320: ['3d', '3days', '3day'], 10080: ['7d', '7days', '7day', 'w', 'week', '1week']}`",
+        "-h": "Usage: `/reloc_id thread_name=<thread_name>,ids=<ids>[,archive_in=<archive_in>][,title=<title>][,flags=-<flags>]`",
         "no-thread": "Error: Thread name is required.",
         "no-ids": "Error: Message IDs are required.",
         "invalid-archive-in": "Error: Invalid archive duration. Please use a valid time format (e.g., '60m', '2h', '1d').",

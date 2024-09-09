@@ -1,10 +1,10 @@
 import discord
-from time_parsing import parse_time
-from flags import Flags
+from parsing import parse_time
+from parsing import Flags
 from log import conditional_log
 from discord.ext.commands import param
 import json
-from .shared import uses_flags, has_help_flag, archive_duration_to_minutes, get_parent, resend_to
+from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to
 
 with open('commands/reloc.json') as f:
     __data = json.load(f)
@@ -14,14 +14,17 @@ description = __data['description']
 logs = __data['logs']
 
 @uses_flags
-@has_help_flag(logs['-h'])
-async def func(ctx,
-               flags: str | None,
-               thread_name: str | None = param(description=params['thread_name']),
-               start_date: str | None = param(description=params['start_date']),
-               end_date: str | None = param(description=params['end_date']),
-               title: str | None = param(description=params['title'], default="true"),
-               archive_in: str | None = param(description=params['archive_in'], default="60")):
+async def func(ctx, params: dict[str, str], flags: Flags):
+    if flags is not None and flags['help']:
+        await ctx.send(logs['-h'])
+        return
+    
+    thread_name = params.get("thread_name", None)
+    start_date = params.get("start_date", None)
+    end_date = params.get("end_date", None)
+    archive_in = params.get("archive_in", "60")
+    title = params.get("title", "true")
+    
     if thread_name is None:
         await conditional_log(ctx, flags, logs['no-thread'], important=True)
         return

@@ -4,6 +4,6 @@
         "flags": "a combination of `-` symbols and english lowercase letters"
     },
     "logs": {
-        "-h": "Usage: `/ping -[flags]`"
+        "-h": "Usage: `/ping [flags=-<flags>]`"
     }
 }

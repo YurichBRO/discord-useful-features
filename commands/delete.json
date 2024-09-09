@@ -6,7 +6,7 @@
         "end_date": "ending date in format YYYY-MM-DD-hh:mm:ss"
     },
     "logs": {
-        "-h": "Usage: `/delete -[flags] start_date end_date`",
+        "-h": "Usage: `/delete start_date=<start_date>,end_date=<end_date>[,flags=-<flags>]`",
         "no-date": "Please provide both start and end dates.",
         "invalid-date": "Invalid date format.",
         "fetch": "Fetched {} messages from {} to {}.",

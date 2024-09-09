@@ -1,37 +1,20 @@
 from functools import wraps
-from flags import parse
+from parsing import parse_flags, parse_params
 import discord
-from flags import Flags
+from parsing import Flags
 from log import conditional_log
 
 def uses_flags(func):
-    @wraps(func)
-    async def inner(*args):
-        args = list(args)
-        if len(args) == 0:
-            raise ValueError("No arguments passed to function, required argument is ctx.")
-        ctx = args[0]
-        if len(args) < 2 or args[1] == None:
-            await ctx.send("Flags parameter is required. If you don't want to use flags, use the `-` symbol as a placeholder.")
-            return
+    async def inner(ctx, params: str | None):
+        params = parse_params(params)
+        flags = params.get("flags", None)
         try:
-            args[1] = parse(args[1])
+            flags = parse_flags(flags)
         except ValueError as e:
-            ctx.send(str(e))
-        await func(*args)
+            await ctx.send(str(e))
+            return
+        return await func(ctx, params, flags)
     return inner
-
-def has_help_flag(help_message):
-    def outer(func):
-        @wraps(func)
-        async def inner(*args):
-            ctx, flags = args[0], args[1]
-            if flags['help']:
-                await ctx.send(help_message)
-                return
-            await func(*args)
-        return inner
-    return outer
 
 archive_duration_syntaxes = {
     60: ["h", "1h", "hour", "1hour"],

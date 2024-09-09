@@ -1,8 +1,9 @@
 from discord.ext.commands import param
-from time_parsing import parse_time
+from parsing import parse_time
 from log import conditional_log
 import json
-from .shared import uses_flags, has_help_flag
+from parsing import Flags
+from .shared import uses_flags
 
 with open('commands/delete.json') as f:
     __data = json.load(f)
@@ -12,23 +13,27 @@ description = __data['description']
 logs = __data['logs']
 
 @uses_flags
-@has_help_flag(logs['-h'])
-async def func(ctx,
-               flags: str | None,
-               start_date: str | None = param(description=params['start_date']),
-               end_date: str | None = param(description=params['end_date'])):
-    if start_date is None or end_date is None:
+async def func(ctx, params: str, flags: Flags):
+    if flags is not None and flags['help']:
+        await ctx.send(logs['-h'])
+        return
+    
+    start_date = params.get('start_date')
+    if start_date is None:
         await conditional_log(ctx, flags, logs['no-date'], important=True)
         return
+    end_date = params.get('end_date')
+    if end_date is None:
+        await conditional_log(ctx, flags, logs['no-date'], important=True)
+        return
+    
     # Convert date strings to datetime objects
     try:
         start_datetime = parse_time(start_date)
         end_datetime = parse_time(end_date)
     except ValueError:
         await conditional_log(ctx, flags, logs['invalid-date'], important=True)
-        return
     
-    # Fetch messages from the channel
     messages = [message async for message in ctx.channel.history(limit=None, after=start_datetime, before=end_datetime)]
     await conditional_log(ctx, flags, logs['fetch'].format(len(messages), start_date, end_date))
     

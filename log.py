@@ -1,4 +1,4 @@
-from flags import Flags
+from parsing import Flags
 
 async def conditional_log(ctx, flags: Flags, message: str, important: bool = False):
     if flags['silent']: return
