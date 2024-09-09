@@ -1,5 +1,5 @@
 import discord
-from parsing import parse_time
+from parsing import parse_time, parse_flexible_time
 from parsing import Flags
 from log import conditional_log
 from discord.ext.commands import param
@@ -34,7 +34,7 @@ async def func(ctx, params: dict[str, str], flags: Flags):
     # Convert date strings to datetime objects
     try:
         start_datetime = parse_time(start_date)
-        end_datetime = parse_time(end_date)
+        end_datetime = parse_flexible_time(start_date, end_date)
     except:
         await conditional_log(ctx, flags, logs['invalid-date'], important=True)
         return

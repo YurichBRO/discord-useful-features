@@ -1,17 +1,23 @@
 from __future__ import annotations
 from datetime import datetime
 
-FORMATS = [
-    '%Y-%m-%d-%H:%M:%S',
-]
+FORMAT = '%Y-%m-%d-%H:%M:%S'
+FORMAT_PARTS = 6
 
-def parse_time(time_str: str) -> datetime:
-    for format in FORMATS:
-        try:
-            return datetime.strptime(time_str, format)
-        except ValueError:
-            pass
-    raise ValueError("Invalid time format")
+def parse_time(time: str):
+    return datetime.strptime(time, FORMAT)
+
+def split_time(time: str):
+    return time.replace(':', '-').split('-')
+
+def format_time(parts):
+    return f'{parts[0]}-{parts[1]}-{parts[2]}-{parts[3]}:{parts[4]}:{parts[5]}'
+
+def parse_flexible_time(base: str, another: str):
+    base_parts = split_time(base)
+    another_parts = split_time(another)
+    combined = base_parts[:FORMAT_PARTS - len(another_parts)] + another_parts
+    return datetime.strptime(format_time(combined), FORMAT)
 
 def parse_params(params: str | None) -> dict[str, str]:
     if not params:

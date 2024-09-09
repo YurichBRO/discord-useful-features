@@ -52,3 +52,5 @@ form: `<key>=<value>,<key2>...`
 There are escape sequences:
 To write a comma as a character you need to escape it     
 To use `\,` literally, escape the slash: `\\,`
+
+2.1 - when a command has two dates as arguments, you can now shorten the second one by only entering the part that differs from the first one.
