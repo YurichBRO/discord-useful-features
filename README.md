@@ -5,17 +5,18 @@ With this bot I'm trying to add some of these missing features.
 ## Functionality
 The bot uses classic commands, instead of slash ones, although its prefix is a slash.
 Command syntax is:
-`/command -[flags] [parameters]`
+`/command [parameters]`
 
-There are currently 3 commands:
+There are currently 5 commands:
 - `delete`
 - `reloc`
 - `ping`
 - `reloc_id`
+- `delete_id`
 
 For more info on the commands, use:
 `/help [command]` - for description and parameters description
-`/command -h` - for usage and notes about the command
+`/command flags=-h` - for usage and notes about the command
 ## Flags
 All flags are written without spaces or any additional symbols except `-`. Flags can be combined. Unknown flags cause the command to be terminated and an error message is sent.
 
@@ -57,4 +58,4 @@ To use `\,` literally, escape the slash: `\\,`
 2.2 - removed -d flag as it is reloc-unique parameter, which is 
 now passed through delete parameter.
 
-2.3 - as there are more and more commands, commands module now has an __init__.py file in which all the commands are imported to be easily exported to main.py. Added new command - delete_id"
+2.3 - as there are more and more commands, commands module now has an `__init__.py` file in which all the commands are imported to be easily exported to main.py. Added new command - `/delete_id`"

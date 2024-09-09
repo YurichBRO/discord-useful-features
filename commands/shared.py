@@ -20,6 +20,16 @@ def uses_flags(func):
         return await func(ctx, params, flags)
     return inner
 
+def has_help(message):
+    def outer(func):
+        async def inner(ctx, params: str | None, flags: Flags):
+            if flags is not None and flags['help']:
+                await ctx.send(message)
+                return
+            return await func(ctx, params, flags)
+        return inner
+    return outer
+
 archive_duration_syntaxes = {
     60: ["h", "1h", "hour", "1hour"],
     1440: ["d", "1d", "day", "1day"],

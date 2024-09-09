@@ -1,13 +1,10 @@
 {
     "params": {
-        "ids": {
-            "type": "string",
-            "description": "IDs of messages to delete, separated by hyphens"
-        }
+        "ids": "IDs of messages to delete, separated by hyphens"
     },
     "description": "Delete messages by their IDs",
     "logs": {
-        "-h": "Usage: !delete_id <ids>\nDelete messages by their IDs. Separate multiple IDs with hyphens.\nExample: !delete_id 123456789-987654321",
+        "-h": "Usage: `/delete_id ids=<ids>[,flags=<flags>]`",
         "no-ids": "No message IDs provided.",
         "not-found": "Message with ID {} not found.",
         "invalid-id": "Invalid message ID: {}",

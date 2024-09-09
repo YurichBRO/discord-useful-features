@@ -2,7 +2,7 @@ import discord
 from parsing import Flags
 from log import conditional_log
 import json
-from .shared import uses_flags
+from .shared import uses_flags, has_help
 
 with open('commands/delete_id.json') as f:
     __data = json.load(f)
@@ -12,11 +12,8 @@ description = __data['description']
 logs = __data['logs']
 
 @uses_flags
+@has_help(logs['-h'])
 async def func(ctx, params: dict[str, str], flags: Flags):
-    if flags is not None and flags['help']:
-        await ctx.send(logs['-h'])
-        return
-    
     ids = params.get("ids", None)
     
     if ids is None:

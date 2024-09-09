@@ -4,7 +4,7 @@ from parsing import Flags
 from log import conditional_log
 from discord.ext.commands import param
 import json
-from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to
+from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to, has_help
 
 with open('commands/reloc_id.json') as f:
     __data = json.load(f)
@@ -14,11 +14,8 @@ description = __data['description']
 logs = __data['logs']
 
 @uses_flags
+@has_help(logs['-h'])
 async def func(ctx, params: dict[str, str], flags: Flags):
-    if flags is not None and flags['help']:
-        await ctx.send(logs['-h'])
-        return
-    
     thread_name = params.get("thread_name", None)
     ids = params.get("ids", None)
     archive_in = params.get("archive_in", "60")
