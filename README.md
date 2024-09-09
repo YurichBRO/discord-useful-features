@@ -41,3 +41,14 @@ Valid flag syntaxes:
 1.3 - added `archive_in` parameter to `reloc` command.
 
 1.4 - added `reloc_id` command, now you can relocate individual messages with ease.
+
+1.5 - added `title` parameter to `reloc` command, now you can either add title with author and filename or do not. This is useful when relocating twice to prevent adding 2 titles.
+
+2.0 - entirely new command syntax.
+Now the commands have this syntax:
+`/command <params>`
+<params>  includes all the mandatory and optional parameters in this
+form: `<key>=<value>,<key2>...`
+There are escape sequences:
+To write a comma as a character you need to escape it     
+To use `\,` literally, escape the slash: `\\,`
