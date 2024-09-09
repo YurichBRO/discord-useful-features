@@ -56,14 +56,16 @@ def get_parent(thread):
     else:
         return thread
 
-async def resend_to(ctx, flags: Flags, thread, message):
+async def resend_to(ctx, flags: Flags, thread, message, title: bool = True):
     content = message.content
     embeds = message.embeds
     files = [await file.to_file() for file in message.attachments]
     
+    if title:
+        content = f"-# **{message.author.name}** {message.created_at.strftime('%Y-%m-%d-%H:%M:%S')}:\n\t{content}"
     await thread.send(
         # the first symbol in the string is not a regular space
-        f"-# **{message.author.name}** {message.created_at.strftime('%Y-%m-%d-%H:%M:%S')}:\n\t{content}",
+        content,
         embeds=embeds,
         files=files
     )

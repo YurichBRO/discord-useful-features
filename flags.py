@@ -1,4 +1,6 @@
 def parse(flags: str):
+    if flags[0] != '-':
+        raise ValueError("Flags must start with a `-`")
     parser = Flags()
     for flag in parser.FLAGS:
         parser[parser.FLAGS[flag]] = False
@@ -19,7 +21,7 @@ class Flags:
     }
     
     def __init__(self):
-        self.__flags = {}
+        self.__flags = {self.FLAGS[key]: False for key in self.FLAGS.keys()}
     
     def __getitem__(self, key):
         return self.__flags[key]
