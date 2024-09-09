@@ -49,7 +49,14 @@ async def func(ctx, params: dict[str, str], flags: Flags):
         await conditional_log(ctx, flags, logs['create-thread'].format(thread.mention))
 
     # Fetch messages from the channel
-    messages = [await ctx.channel.fetch_message(id) for id in ids]
+    messages = []
+    for id in ids:
+        try:
+            message = await ctx.channel.fetch_message(int(id))
+            messages.append(message)
+        except:
+            await conditional_log(ctx, flags, logs['not-found'].format(id), important=True)
+            return
     await conditional_log(ctx, flags, logs['fetch'].format(len(messages)))
 
     # Re-send messages in the new thread

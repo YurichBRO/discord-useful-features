@@ -56,3 +56,5 @@ To use `\,` literally, escape the slash: `\\,`
 
 2.2 - removed -d flag as it is reloc-unique parameter, which is 
 now passed through delete parameter.
+
+2.3 - as there are more and more commands, commands module now has an __init__.py file in which all the commands are imported to be easily exported to main.py. Added new command - delete_id"

@@ -11,6 +11,7 @@
         "-h": "Usage: `/reloc_id thread_name=<thread_name>,ids=<ids>[,archive_in=<archive_in>][,title=<title>][,flags=-<flags>]`",
         "no-thread": "Error: Thread name is required.",
         "no-ids": "Error: Message IDs are required.",
+        "not-found": "Message with ID {} not found.",
         "invalid-archive-in": "Error: Invalid archive duration. Please use a valid time format (e.g., '60m', '2h', '1d').",
         "using-channel": "Using current channel {} for relocation.",
         "create-thread": "Created new thread {} for relocation.",

@@ -1,6 +1,7 @@
 import discord
-from discord.ext import commands
-from commands import ping, reloc, delete, reloc_id
+import commands
+from discord.ext import commands as discord_commands
+
 from dotenv import load_dotenv
 from os import getenv
 
@@ -14,9 +15,10 @@ TOKEN = getenv('TOKEN')
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix='/', intents=intents) 
+bot = discord_commands.Bot(command_prefix='/', intents=intents) 
 
-for module in [ping, reloc, delete, reloc_id]:
+for module_name in commands.__all__:
+    module = getattr(commands, module_name)
     commandify(bot, module)
 
 bot.run(TOKEN)
