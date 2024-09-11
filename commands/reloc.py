@@ -1,10 +1,9 @@
-import discord
 from parsing import parse_time, parse_flexible_time
-from parsing import Flags
+from parsing import Flags, FORMAT as TIME_FORMAT
 from log import conditional_log
-from discord.ext.commands import param
 import json
-from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to, has_help
+from .shared import uses_flags, archive_duration_to_minutes, get_parent, has_help, resend_messages_to
+from datetime import datetime
 
 with open('commands/reloc.json') as f:
     __data = json.load(f)
@@ -26,14 +25,18 @@ async def func(ctx, params: dict[str, str], flags: Flags):
     if thread_name is None:
         await conditional_log(ctx, flags, logs['no-thread'], important=True)
         return
-    if start_date is None or end_date is None:
-        await conditional_log(ctx, flags, logs['no-date'], important=True)
-        return
     # Convert date strings to datetime objects
     try:
-        start_datetime = parse_time(start_date)
-        end_datetime = parse_flexible_time(start_date, end_date)
-    except:
+        if start_date is None:
+            start_datetime = ctx.channel.created_at
+            start_date = start_datetime.strftime(TIME_FORMAT)
+        else:
+            start_datetime = parse_time(start_date)
+        if end_date is None:
+            end_datetime = datetime.now()
+        else:
+            end_datetime = parse_flexible_time(start_date, end_date)
+    except ValueError:
         await conditional_log(ctx, flags, logs['invalid-date'], important=True)
         return
     
@@ -56,7 +59,6 @@ async def func(ctx, params: dict[str, str], flags: Flags):
     await conditional_log(ctx, flags, logs['fetch'].format(len(messages), start_date, end_date))
 
     # Re-send messages in the new thread
-    for message in messages:
-        await resend_to(ctx, flags, thread, message, title=title == "true", delete=delete == "true")
+    await resend_messages_to(ctx, flags, thread, messages, title=title == "true", delete=delete == "true")
         
     await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date, thread.mention))

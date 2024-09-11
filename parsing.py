@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime
 
-FORMAT = '%Y-%m-%d-%H:%M:%S'
+FORMAT = r'%Y-%m-%d-%H:%M:%S'
 FORMAT_PARTS = 6
 
 def parse_time(time: str):

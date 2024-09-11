@@ -1,4 +1,3 @@
-from functools import wraps
 from parsing import parse_flags, parse_params, FORMAT as TIME_FORMAT
 import discord
 from parsing import Flags
@@ -70,3 +69,7 @@ async def resend_to(ctx, flags: Flags, thread, message, title: bool = True, dele
     if delete:
         await message.delete()
         await conditional_log(ctx, flags, f"deleted message {message.id}")
+
+async def resend_messages_to(ctx, flags: Flags, thread, messages, title: bool = True, delete: bool = True):
+    for message in messages:
+        await resend_to(ctx, flags, thread, message, title, delete)

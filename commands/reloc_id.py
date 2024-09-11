@@ -1,10 +1,7 @@
-import discord
-from parsing import parse_time
 from parsing import Flags
 from log import conditional_log
-from discord.ext.commands import param
 import json
-from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to, has_help
+from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to, has_help, resend_messages_to
 
 with open('commands/reloc_id.json') as f:
     __data = json.load(f)
@@ -57,7 +54,6 @@ async def func(ctx, params: dict[str, str], flags: Flags):
     await conditional_log(ctx, flags, logs['fetch'].format(len(messages)))
 
     # Re-send messages in the new thread
-    for message in messages:
-        await resend_to(ctx, flags, thread, message, title=title == "true", delete=delete == "true")
+    await resend_messages_to(ctx, flags, thread, messages, title=title == "true", delete=delete == "true")
         
     await conditional_log(ctx, flags, logs['finish'].format(thread.mention))
