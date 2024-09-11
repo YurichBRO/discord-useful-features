@@ -1,7 +1,7 @@
 from parsing import Flags
 from log import conditional_log
 import json
-from .shared import uses_flags, archive_duration_to_minutes, get_parent, resend_to, has_help, resend_messages_to
+from .shared import uses_flags, uses_params, archive_duration_to_minutes, get_parent, resend_to, has_help, resend_messages_to
 
 with open('commands/reloc_id.json') as f:
     __data = json.load(f)
@@ -10,6 +10,7 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
+@uses_params
 @uses_flags
 @has_help(logs['-h'])
 async def func(ctx, params: dict[str, str], flags: Flags):

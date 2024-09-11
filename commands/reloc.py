@@ -2,7 +2,7 @@ from parsing import parse_time, parse_flexible_time
 from parsing import Flags, FORMAT as TIME_FORMAT
 from log import conditional_log
 import json
-from .shared import uses_flags, archive_duration_to_minutes, get_parent, has_help, resend_messages_to
+from .shared import command, archive_duration_to_minutes, get_parent, has_help, resend_messages_to
 from datetime import datetime
 
 with open('commands/reloc.json') as f:
@@ -12,27 +12,28 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-@uses_flags
-@has_help(logs['-h'])
-async def func(ctx, params: dict[str, str], flags: Flags):
-    thread_name = params.get("thread_name", None)
-    start_date = params.get("start_date", None)
-    end_date = params.get("end_date", None)
-    archive_in = params.get("archive_in", "60")
-    title = params.get("title", "true")
-    delete = params.get("delete", "false")
+@command({
+    "thread_name": None,
+    "start_date": "",
+    "end_date": "",
+    "archive_in": "60",
+    "title": "true",
+    "delete": "false",
+}, logs['-h'])
+async def func(ctx, params: list, flags: Flags):
+    thread_name, start_date, end_date, archive_in, title, delete = params
     
     if thread_name is None:
         await conditional_log(ctx, flags, logs['no-thread'], important=True)
         return
     # Convert date strings to datetime objects
     try:
-        if start_date is None:
+        if not start_date:
             start_datetime = ctx.channel.created_at
             start_date = start_datetime.strftime(TIME_FORMAT)
         else:
             start_datetime = parse_time(start_date)
-        if end_date is None:
+        if not end_date:
             end_datetime = datetime.now()
         else:
             end_datetime = parse_flexible_time(start_date, end_date)

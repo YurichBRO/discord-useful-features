@@ -3,7 +3,7 @@ from parsing import parse_time, parse_flexible_time
 from log import conditional_log
 import json
 from parsing import Flags, FORMAT as TIME_FORMAT
-from .shared import uses_flags, has_help
+from .shared import uses_flags, uses_params, has_help
 from datetime import datetime
 
 with open('commands/delete.json') as f:
@@ -13,6 +13,7 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
+@uses_params
 @uses_flags
 @has_help(logs['-h'])
 async def func(ctx, params: str, flags: Flags):

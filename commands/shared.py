@@ -3,13 +3,59 @@ import discord
 from parsing import Flags
 from log import conditional_log, log
 
-def uses_flags(func):
+def command(all_params: dict[str, str], help_message: str):
+    def outer(func):
+        async def inner(ctx, params: str | None):
+            try:
+                params = parse_params(params)
+            except ValueError as e:
+                await log(ctx, f"Could not parse params, invalid param format: {e}")
+                return
+            
+            if "flags" not in params:
+                params["flags"] = None
+            flags = params["flags"]
+            try:
+                flags = parse_flags(flags)
+            except ValueError as e:
+                await log(ctx, f"Could not parse flags, invalid flags format: {e}")
+                return
+            del params["flags"]
+            
+            if flags is not None and flags['help']:
+                await ctx.send(help_message)
+                return
+            
+            for param_name in all_params:
+                if param_name not in params:
+                    if all_params[param_name] is None:
+                        await log(ctx, f"Missing required param: {param_name}")
+                        return
+                    # Assigning default value in case the parameter has a default value
+                    params[param_name] = all_params[param_name]
+            for param_name in params:
+                if param_name not in all_params:
+                    await log(ctx, f"Unknown param: {param_name}")
+                    return
+            
+            params = [params[key] for key in all_params]
+            
+            return await func(ctx, params, flags)
+        return inner
+    return outer
+
+def uses_params(func):
     async def inner(ctx, params: str | None):
         try:
             params = parse_params(params)
         except ValueError as e:
-            await log(ctx, f"Could not parse params, including flags, therefore, they won't affect this message. Invalid param format: {e}")
+            await log(ctx, f"Could not parse params, invalid param format: {e}")
             return
+        return await func(ctx, params)
+    return inner
+
+def uses_flags(func):
+    async def inner(ctx, params: dict[str, str]):
         flags = params.get("flags", None)
         try:
             flags = parse_flags(flags)
@@ -18,6 +64,7 @@ def uses_flags(func):
             return
         return await func(ctx, params, flags)
     return inner
+
 
 def has_help(message):
     def outer(func):
