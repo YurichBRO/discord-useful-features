@@ -1,7 +1,7 @@
 from parsing import Flags
 from log import conditional_log
 import json
-from .shared import uses_flags, uses_params, archive_duration_to_minutes, get_parent, resend_to, has_help, resend_messages_to
+from .shared import command, archive_duration_to_minutes, get_parent, resend_to, has_help, resend_messages_to
 
 with open('commands/reloc_id.json') as f:
     __data = json.load(f)
@@ -10,22 +10,15 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-@uses_params
-@uses_flags
-@has_help(logs['-h'])
-async def func(ctx, params: dict[str, str], flags: Flags):
-    thread_name = params.get("thread_name", None)
-    ids = params.get("ids", None)
-    archive_in = params.get("archive_in", "60")
-    title = params.get("title", "true")
-    delete = params.get("delete", "false")
-    
-    if thread_name is None:
-        await conditional_log(ctx, flags, logs['no-thread'], important=True)
-        return
-    if ids is None:
-        await conditional_log(ctx, flags, logs['no-ids'], important=True)
-        return
+@command({
+    "thread_name": None,
+    "ids": None,
+    "archive_in": "60",
+    "title": "true",
+    "delete": "false",
+}, logs['-h'])
+async def func(ctx, params: list, flags: Flags):
+    thread_name, ids, archive_in, title, delete = params
     
     ids = ids.split('-')
     

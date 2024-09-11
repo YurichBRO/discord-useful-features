@@ -3,7 +3,7 @@ from parsing import parse_time, parse_flexible_time
 from log import conditional_log
 import json
 from parsing import Flags, FORMAT as TIME_FORMAT
-from .shared import uses_flags, uses_params, has_help
+from .shared import command
 from datetime import datetime
 
 with open('commands/delete.json') as f:
@@ -13,21 +13,21 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-@uses_params
-@uses_flags
-@has_help(logs['-h'])
-async def func(ctx, params: str, flags: Flags):
-    start_date = params.get('start_date', None)
-    end_date = params.get('end_date', None)
+@command({
+    "start_date": "",
+    "end_date": "",
+}, logs['-h'])
+async def func(ctx, params: list, flags: Flags):
+    start_date, end_date = params
     
     # Convert date strings to datetime objects
     try:
-        if start_date is None:
+        if not start_date:
             start_datetime = ctx.channel.created_at
             start_date = start_datetime.strftime(TIME_FORMAT)
         else:
             start_datetime = parse_time(start_date)
-        if end_date is None:
+        if not end_date:
             end_datetime = datetime.now()
         else:
             end_datetime = parse_flexible_time(start_date, end_date)

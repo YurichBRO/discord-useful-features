@@ -7,7 +7,6 @@
     },
     "logs": {
         "-h": "Usage: `/delete start_date=<start_date>,end_date=<end_date>[,flags=-<flags>]`",
-        "no-date": "Please provide both start and end dates.",
         "invalid-date": "Invalid date format.",
         "fetch": "Fetched {} messages from {} to {}.",
         "delete": "deleted message {}",

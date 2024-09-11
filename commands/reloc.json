@@ -10,8 +10,6 @@
     },
     "logs": {
         "-h": "Usage: `/reloc start_date=<start_date>,end_date=<end_date>[,archive_in=<archive_in>][,title=<title>][,flags=-<flags>]`",
-        "no-thread": "Please provide a thread name.",
-        "no-date": "Please provide both start and end dates.",
         "invalid-date": "Invalid date format.",
         "invalid-archive-in": "Invalid archive_in value, should be 60, 1440, 4320, 10080",
         "using-channel": "Using current channel {} as thread.",

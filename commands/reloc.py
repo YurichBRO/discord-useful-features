@@ -23,9 +23,6 @@ logs = __data['logs']
 async def func(ctx, params: list, flags: Flags):
     thread_name, start_date, end_date, archive_in, title, delete = params
     
-    if thread_name is None:
-        await conditional_log(ctx, flags, logs['no-thread'], important=True)
-        return
     # Convert date strings to datetime objects
     try:
         if not start_date:
