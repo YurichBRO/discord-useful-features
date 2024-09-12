@@ -44,37 +44,6 @@ def command(all_params: dict[str, str], help_message: str):
         return inner
     return outer
 
-def uses_params(func):
-    async def inner(ctx, params: str | None):
-        try:
-            params = parse_params(params)
-        except ValueError as e:
-            await log(ctx, f"Could not parse params, invalid param format: {e}")
-            return
-        return await func(ctx, params)
-    return inner
-
-def uses_flags(func):
-    async def inner(ctx, params: dict[str, str]):
-        flags = params.get("flags", None)
-        try:
-            flags = parse_flags(flags)
-        except ValueError as e:
-            await log(ctx, f"Could not parse flags, therefore, they won't affect this message. Invalid flags format: {e}")
-            return
-        return await func(ctx, params, flags)
-    return inner
-
-
-def has_help(message):
-    def outer(func):
-        async def inner(ctx, params: str | None, flags: Flags):
-            if flags is not None and flags['help']:
-                await ctx.send(message)
-                return
-            return await func(ctx, params, flags)
-        return inner
-    return outer
 
 archive_duration_syntaxes = {
     60: ["h", "1h", "hour", "1hour"],
@@ -114,9 +83,30 @@ async def resend_to(ctx, flags: Flags, thread, message, title: bool = True, dele
     )
     await conditional_log(ctx, flags, f"relocated message {message.id}")
     if delete:
-        await message.delete()
-        await conditional_log(ctx, flags, f"deleted message {message.id}")
+        await delete_message(ctx, flags, message)
 
 async def resend_messages_to(ctx, flags: Flags, thread, messages, title: bool = True, delete: bool = True):
     for message in messages:
         await resend_to(ctx, flags, thread, message, title, delete)
+
+async def delete_message(ctx, flags, message):
+    await message.delete()
+    await conditional_log(ctx, flags, f"deleted message {message.id}")
+
+async def delete_messages(ctx, flags: Flags, messages):
+    for message in messages:
+        await delete_message(ctx, flags, message)
+
+async def get_message_generator_by_ids(ctx, flags: Flags, ids: list[str], ignore_errors: bool = False):
+    for id in ids:
+        try:
+            message = await ctx.channel.fetch_message(id)
+            yield message
+        except discord.NotFound:
+            await conditional_log(ctx, flags, f"message {id} not found", important=True)
+            if not ignore_errors:
+                break
+
+async def get_message_generator_by_time(ctx, flags, start_date, end_date):
+    async for message in ctx.channel.history(after=start_date, before=end_date, limit=None):
+        yield message

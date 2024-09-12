@@ -1,6 +1,5 @@
 from parsing import Flags
 from log import conditional_log
-from discord.ext.commands import param
 import json
 from .shared import command
 

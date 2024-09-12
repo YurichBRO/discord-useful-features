@@ -1,0 +1,13 @@
+{
+    "params": {
+        "thread_names": "List of thread names separated by `-` symbol"
+    },
+    "description": "Delete threads by their names",
+    "logs": {
+        "-h": "Usage: `/delete_threads thread_names=<thread_names>[,flags=-<flags>][,all_occurences=false]`",
+        "not-found": "Thread with name {} not found",
+        "fetch": "Fetched {} threads.",
+        "deleted": "thread with name {} has been deleted",
+        "finish": "Finished deleting {} threads."
+    }
+}

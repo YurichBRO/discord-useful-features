@@ -2,7 +2,7 @@ from parsing import parse_time, parse_flexible_time
 from parsing import Flags, FORMAT as TIME_FORMAT
 from log import conditional_log
 import json
-from .shared import command, archive_duration_to_minutes, get_parent, has_help, resend_messages_to
+from .shared import command, archive_duration_to_minutes, get_parent, resend_to, get_message_generator_by_time
 from datetime import datetime
 
 with open('commands/reloc.json') as f:
@@ -44,6 +44,9 @@ async def func(ctx, params: list, flags: Flags):
         await conditional_log(ctx, flags, logs['invalid-archive-in'], important=True)
         return
     
+    title = title.lower() == "true"
+    delete = delete.lower() == "true"
+    
     channel = get_parent(ctx.channel)
     if thread_name == "-":
         thread = channel
@@ -53,10 +56,8 @@ async def func(ctx, params: list, flags: Flags):
         await conditional_log(ctx, flags, logs['create-thread'].format(thread.mention))
 
     # Fetch messages from the channel
-    messages = [message async for message in ctx.channel.history(limit=None, after=start_datetime, before=end_datetime)]
-    await conditional_log(ctx, flags, logs['fetch'].format(len(messages), start_date, end_date))
-
-    # Re-send messages in the new thread
-    await resend_messages_to(ctx, flags, thread, messages, title=title == "true", delete=delete == "true")
+    message_generator = get_message_generator_by_time(ctx, flags, start_datetime, end_datetime)
+    async for message in message_generator:
+        await resend_to(ctx, flags, thread, message, title, delete)
         
     await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date, thread.mention))

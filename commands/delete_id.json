@@ -8,7 +8,6 @@
         "not-found": "Message with ID {} not found.",
         "invalid-id": "Invalid message ID: {}",
         "fetch": "Fetched {} messages.",
-        "delete": "Deleted message with ID {}.",
-        "finish": "Finished deleting {} messages."
+        "finish": "Finished deleting messages."
     }
 }

@@ -1,9 +1,8 @@
-from discord.ext.commands import param
 from parsing import parse_time, parse_flexible_time
 from log import conditional_log
 import json
 from parsing import Flags, FORMAT as TIME_FORMAT
-from .shared import command
+from .shared import command, delete_message, get_message_generator_by_time
 from datetime import datetime
 
 with open('commands/delete.json') as f:
@@ -34,12 +33,8 @@ async def func(ctx, params: list, flags: Flags):
     except ValueError:
         await conditional_log(ctx, flags, logs['invalid-date'], important=True)
     
-    messages = [message async for message in ctx.channel.history(limit=None, after=start_datetime, before=end_datetime)]
-    await conditional_log(ctx, flags, logs['fetch'].format(len(messages), start_date, end_date))
-    
-    # Delete messages
-    for message in messages:
-        await message.delete()
-        await conditional_log(ctx, flags, logs['delete'].format(message.id))
+    message_generator = get_message_generator_by_time(ctx, flags, start_datetime, end_datetime)
+    async for message in message_generator:
+        await delete_message(ctx, flags, message)
     
     await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date))

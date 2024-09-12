@@ -58,6 +58,8 @@ To use `\,` literally, escape the slash: `\\,`
 2.2 - removed -d flag as it is reloc-unique parameter, which is 
 now passed through delete parameter.
 
-2.3 - as there are more and more commands, commands module now has an `__init__.py` file in which all the commands are imported to be easily exported to main.py. Added new command - `/delete_id`"
+2.3 - as there are more and more commands, commands module now has an `__init__.py` file in which all the commands are imported to be easily exported to main.py. Added new command - `delete_id`"
 
 2.4 - start_date and end_date are now optional parameters for `reloc` command and `delete` command. Now you can select messages from the creation of thread or a channel to the current moment, or just omit just one of them.
+
+2.5 - added `delete_threads` command, which can delete threads with a specific name in a channel. You can also choose, whether to delete the first occurence or all of them. Optimised some of the message operations with lazy evaluation.

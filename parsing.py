@@ -39,7 +39,7 @@ def parse_params(params: str | None) -> dict[str, str]:
             if not key:
                 raise ValueError("Empty parameter name.")
             current = value
-        elif char == ',':
+        elif char == ';':
             if not key:
                 raise ValueError("Empty parameter name.")
             if not value:
@@ -62,8 +62,6 @@ def parse_flags(flags: str | None) -> Flags:
     parser = Flags()
     if flags is None:
         return parser
-    if flags[0] != '-':
-        raise ValueError("Flags must start with a `-`")
     for flag in parser.FLAGS:
         parser[parser.FLAGS[flag]] = False
     for flag in flags:
