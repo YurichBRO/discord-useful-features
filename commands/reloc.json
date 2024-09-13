@@ -10,11 +10,9 @@
     },
     "logs": {
         "-h": "Usage: `/reloc start_date=<start_date>,end_date=<end_date>[,archive_in=<archive_in>][,title=<title>][,flags=-<flags>]`",
-        "invalid-date": "Invalid date format.",
         "invalid-archive-in": "Invalid archive_in value, should be 60, 1440, 4320, 10080",
         "using-channel": "Using current channel {} as thread.",
         "create-thread": "Created thread {}.",
-        "fetch": "Fetched {} messages from {} to {}.",
-        "finish": "Messages from {} to {} have been relocated to the new thread: {}"
+        "finish": "Messages have been relocated to the new thread: {}"
     }
 }

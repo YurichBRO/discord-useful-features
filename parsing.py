@@ -77,6 +77,7 @@ class Flags:
         'h': 'help',
         'v': 'verbose',
         's': 'silent',
+        'r': 'remove-selection'
     }
     
     def __init__(self):

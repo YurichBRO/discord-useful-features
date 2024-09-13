@@ -2,6 +2,7 @@ from parsing import parse_flags, parse_params, FORMAT as TIME_FORMAT
 import discord
 from parsing import Flags
 from log import conditional_log, log
+from json import dump, load
 
 def command(all_params: dict[str, str], help_message: str):
     def outer(func):
@@ -40,7 +41,32 @@ def command(all_params: dict[str, str], help_message: str):
             
             params = [params[key] for key in all_params]
             
-            return await func(ctx, params, flags)
+            result = await func(ctx, params, flags)
+            return result
+        return inner
+    return outer
+
+
+def uses_selection(filepath):
+    def outer(func):
+        async def inner(ctx, params: list[str], flags: Flags):
+            author = str(ctx.author.id)
+            with open(filepath, 'r') as f:
+                selected_messages = load(f)
+                await conditional_log(ctx, flags, "Loaded selection")
+            
+            if author not in selected_messages:
+                selected_messages[author] = []
+            
+            result = await func(ctx, params, flags, selected_messages[author])
+            
+            if flags['remove-selection']:
+                selected_messages[author] = []
+                with open(filepath, 'w') as f:
+                    dump(selected_messages, f)
+                    await conditional_log(ctx, flags, "Removed selection")
+            
+            return result
         return inner
     return outer
 

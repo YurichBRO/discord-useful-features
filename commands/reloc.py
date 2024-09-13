@@ -2,8 +2,9 @@ from parsing import parse_time, parse_flexible_time
 from parsing import Flags, FORMAT as TIME_FORMAT
 from log import conditional_log
 import json
-from .shared import command, archive_duration_to_minutes, get_parent, resend_to, get_message_generator_by_time
+from .shared import command, archive_duration_to_minutes, get_parent, resend_to, uses_selection
 from datetime import datetime
+from .select import SELECTED_MESSAGES_FILE
 
 with open('commands/reloc.json') as f:
     __data = json.load(f)
@@ -14,29 +15,13 @@ logs = __data['logs']
 
 @command({
     "thread_name": None,
-    "start_date": "",
-    "end_date": "",
     "archive_in": "60",
     "title": "true",
     "delete": "false",
 }, logs['-h'])
-async def func(ctx, params: list, flags: Flags):
-    thread_name, start_date, end_date, archive_in, title, delete = params
-    
-    # Convert date strings to datetime objects
-    try:
-        if not start_date:
-            start_datetime = ctx.channel.created_at
-            start_date = start_datetime.strftime(TIME_FORMAT)
-        else:
-            start_datetime = parse_time(start_date)
-        if not end_date:
-            end_datetime = datetime.now()
-        else:
-            end_datetime = parse_flexible_time(start_date, end_date)
-    except ValueError:
-        await conditional_log(ctx, flags, logs['invalid-date'], important=True)
-        return
+@uses_selection(SELECTED_MESSAGES_FILE)
+async def func(ctx, params: list, flags: Flags, selected_messages: list[int]):
+    thread_name, archive_in, title, delete = params
     
     try:
         archive_in = archive_duration_to_minutes(archive_in)
@@ -56,8 +41,11 @@ async def func(ctx, params: list, flags: Flags):
         await conditional_log(ctx, flags, logs['create-thread'].format(thread.mention))
 
     # Fetch messages from the channel
-    message_generator = get_message_generator_by_time(ctx, flags, start_datetime, end_datetime)
-    async for message in message_generator:
-        await resend_to(ctx, flags, thread, message, title, delete)
+    for id in selected_messages:
+        try:
+            message = await ctx.channel.fetch_message(id)
+            await resend_to(ctx, flags, thread, message, title, delete)
+        except:
+            await conditional_log(ctx, flags, f"could not fetch message {id}", important=True)
         
-    await conditional_log(ctx, flags, logs['finish'].format(start_date, end_date, thread.mention))
+    await conditional_log(ctx, flags, logs['finish'].format(thread.mention))

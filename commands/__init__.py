@@ -1,2 +1,2 @@
-from . import delete, delete_id, reloc, reloc_id, ping, delete_threads
-__all__ = ['delete', 'delete_id', 'reloc', 'reloc_id', 'ping', 'delete_threads']
+from . import delete, reloc, ping, delete_threads, select
+__all__ = ['delete', 'reloc', 'ping', 'delete_threads', "select"]

@@ -63,3 +63,20 @@ now passed through delete parameter.
 2.4 - start_date and end_date are now optional parameters for `reloc` command and `delete` command. Now you can select messages from the creation of thread or a channel to the current moment, or just omit just one of them.
 
 2.5 - added `delete_threads` command, which can delete threads with a specific name in a channel. You can also choose, whether to delete the first occurence or all of them. Optimised some of the message operations with lazy evaluation.
+
+3.0 - selection update
+
+    previously, commands selected messages inside them, which required
+    different commands for different selector. Now there is a separate
+    command /select, which can use 3 different selectors: date, id set
+    and regex pattern. If multiple are stated, both filters are applied.
+
+    Deleted commands /reloc_id and /delete_id as they became obsolete
+    because the id selector can be used through /select. More than that,
+    reloc now does not accept any selectors, now you have to use /select,
+    which is more convenient.
+
+    Message selection is done through a file selected-messages.json. In case
+    of force termination, it might contain some leftover information about
+    selected messages. Make sure to change its contents to {} every time the
+    bot is terminated.
