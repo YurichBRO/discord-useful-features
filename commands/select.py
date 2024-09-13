@@ -10,19 +10,18 @@ SELECTED_MESSAGES_FILE = 'commands/selected-messages.json'
 
 class Selector:
     def __init__(self, pattern: str | None = None, ids: set[int] | None = None, start_date: datetime | None = None, end_date: datetime | None = None):
-        self.pattern = re.compile(pattern)
-        self.ids = ids
-        self.start_date = start_date
-        self.end_date = end_date
-        
         self.check_query = []
         if pattern:
+            self.pattern = re.compile(pattern)
             self.check_query.append(self.check_pattern)
         if ids:
+            self.ids = ids
             self.check_query.append(self.check_ids)
         if start_date:
+            self.start_date = start_date
             self.check_query.append(self.check_start_date)
         if end_date:
+            self.end_date = end_date
             self.check_query.append(self.check_end_date)
     
     def check_pattern(self, message) -> bool:
@@ -77,11 +76,12 @@ async def get_messages(ctx, pattern: re.Pattern | None, ids: set[int] | None, st
         "ids": "",
         "start_date": "",
         "end_date": "",
+        "remove": "false"
     },
-    "Usage: select [pattern] [ids] [start_date] [end_date]",
+    "Usage: select [pattern] [ids] [start_date] [end_date] [remove]",
 )
 async def func(ctx, params: str | None, flags: Flags):
-    pattern, ids, start_date, end_date = params
+    pattern, ids, start_date, end_date, remove = params
 
     if pattern:
         pattern = re.compile(pattern)
@@ -112,12 +112,20 @@ async def func(ctx, params: str | None, flags: Flags):
         selected_messages = load(f)
     if author not in selected_messages:
         selected_messages[author] = []
-    async for message in get_messages(ctx, pattern, ids, start_date, end_date):
-        if message.id in selected_messages[author]:
-            continue
-        selected_messages[author].append(message.id)
-        await conditional_log(ctx, flags, f"selected message {message.id}")
-        count += 1
+    if remove == "true":
+        async for message in get_messages(ctx, pattern, ids, start_date, end_date):
+            if message.id not in selected_messages[author]:
+                continue
+            selected_messages[author].remove(message.id)
+            count = count - 1
+            await conditional_log(ctx, flags, f"removed message {message.id}")
+    else:
+        async for message in get_messages(ctx, pattern, ids, start_date, end_date):
+            if message.id in selected_messages[author]:
+                continue
+            selected_messages[author].append(message.id)
+            count = count + 1
+            await conditional_log(ctx, flags, f"selected message {message.id}")
     with open(SELECTED_MESSAGES_FILE, 'w') as f:
         dump(selected_messages, f)
     await conditional_log(ctx, flags, f"Selected {count} messages")

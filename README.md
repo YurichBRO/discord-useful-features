@@ -81,3 +81,5 @@ now passed through delete parameter.
     of force termination, it might contain some leftover information about
     selected messages. Make sure to change its contents to {} every time the
     bot is terminated.
+
+3.1 - added `remove` parameter in `/select` command to allow removing certain selector from selection. Now you can first select all the messages from certain time period, for example, then remove specific ids for it - it's one of many possible ways you can use this
