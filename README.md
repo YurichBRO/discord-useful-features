@@ -7,12 +7,11 @@ The bot uses classic commands, instead of slash ones, although its prefix is a s
 Command syntax is:
 `/command [parameters]`
 
-There are currently 5 commands:
+There are currently 4 commands:
+- `select`
 - `delete`
 - `reloc`
 - `ping`
-- `reloc_id`
-- `delete_id`
 
 For more info on the commands, use:
 `/help [command]` - for description and parameters description
@@ -24,9 +23,10 @@ Supported flags:
 - `-h` - help (display help message)
 - `-v` - verbose (display additional info and error messages)
 - `-s` - silent (do not display any info or error messages)
+- `-r` - removes selection for commands that use selected messages 
 
 Valid flag syntaxes:
-- `-` - no flags, just a placeholder, which is mandatory
+- `-` - no flags
 - `-h` - one flag
 - `-h-s` - two flags
 - `-hs` - also two flags, without a delimiter
@@ -45,13 +45,14 @@ Valid flag syntaxes:
 1.5 - added `title` parameter to `reloc` command, now you can either add title with author and filename or do not. This is useful when relocating twice to prevent adding 2 titles.
 
 2.0 - entirely new command syntax.
-Now the commands have this syntax:
-`/command <params>`
-<params>  includes all the mandatory and optional parameters in this
-form: `<key>=<value>,<key2>...`
-There are escape sequences:
-To write a comma as a character you need to escape it     
-To use `\,` literally, escape the slash: `\\,`
+
+    Now the commands have this syntax:
+    `/command <params>`
+    <params>  includes all the mandatory and optional parameters in this
+    form: `<key>=<value>,<key2>...`
+    There are escape sequences:
+    To write a comma as a character you need to escape it     
+    To use `\,` literally, escape the slash: `\\,`
 
 2.1 - when a command has two dates as arguments, you can now shorten the second one by only entering the part that differs from the first one.
 
