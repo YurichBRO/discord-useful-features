@@ -83,3 +83,7 @@ now passed through delete parameter.
     bot is terminated.
 
 3.1 - added `remove` parameter in `/select` command to allow removing certain selector from selection. Now you can first select all the messages from certain time period, for example, then remove specific ids for it - it's one of many possible ways you can use this
+
+3.2 - added new selection capabilities
+
+    now there are 4 modes of selection: add, remove, filter and view. Add - adds selector, remove - removes selector, filter - lists out all selected messages that match provided selector, view - list out all messages in the channel that match provided selector.
