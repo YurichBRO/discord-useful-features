@@ -119,20 +119,18 @@ async def delete_message(ctx, flags, message):
     await message.delete()
     await conditional_log(ctx, flags, f"deleted message {message.id}")
 
-async def delete_messages(ctx, flags: Flags, messages):
-    for message in messages:
-        await delete_message(ctx, flags, message)
+def format_limited_len(content: str, limit: int = 100) -> str:
+    """Formats a string to have limited length
+    If string is shorter that limit, it doesn't change.
+    Otherwise, it truncates the string and adds `...` at the end.
 
-async def get_message_generator_by_ids(ctx, flags: Flags, ids: list[str], ignore_errors: bool = False):
-    for id in ids:
-        try:
-            message = await ctx.channel.fetch_message(id)
-            yield message
-        except discord.NotFound:
-            await conditional_log(ctx, flags, f"message {id} not found", important=True)
-            if not ignore_errors:
-                break
+    Args:
+        content (str): the string that is being formatted
+        limit (int, optional): the maximum length of the string (including `...`). Defaults to 100.
 
-async def get_message_generator_by_time(ctx, flags, start_date, end_date):
-    async for message in ctx.channel.history(after=start_date, before=end_date, limit=None):
-        yield message
+    Returns:
+        str: formatted string
+    """
+    if len(content) > limit:
+        return content[:limit-3] + "..."
+    return content

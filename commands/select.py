@@ -1,26 +1,38 @@
 import re
 from parsing import parse_time, parse_flexible_time
 from datetime import datetime
-from parsing import Flags, FORMAT as TIME_FORMAT
-from .shared import command
+from parsing import Flags
+from .shared import command, format_limited_len
 from log import conditional_log
 from json import load, dump
 
 SELECTED_MESSAGES_FILE = 'commands/selected-messages.json'
 CONTENT_LOG_LIMIT = 100
 
-def format_content(content: str) -> str:
-    if len(content) > CONTENT_LOG_LIMIT:
-        return content[:CONTENT_LOG_LIMIT] + "..."
-    return content
+def format_content(content: str) -> str: return format_limited_len(content, CONTENT_LOG_LIMIT)
 
 class Selector:
+    """Selector for messages"""
     def __init__(self, pattern: str | None = None, ids: set[int] | None = None, start_date: datetime | None = None, end_date: datetime | None = None):
+        """Class constructor
+
+        Args:
+            pattern (str | None, optional): regex pattern that message content
+                is matched to. Defaults to None (any message content is
+                accepted).
+            ids (set[int] | None, optional): set of ids which the matched
+                message has to be in. Defaults to None (any message id is
+                accepted).
+            start_date (datetime | None, optional): the date, after which the message creation date is required to be. Defaults to None (message after any date is accepted).
+            end_date (datetime | None, optional): the date, before which the message creation date is required to be. Defaults to None (message before any date is accepted).
+        """
         self.check_query = []
         if pattern:
             self.pattern = re.compile(pattern)
             self.check_query.append(self.check_pattern)
         if ids:
+            if not isinstance(ids, set):
+                ids = set(ids)
             self.ids = ids
             self.check_query.append(self.check_ids)
         if start_date:
@@ -31,7 +43,7 @@ class Selector:
             self.check_query.append(self.check_end_date)
     
     def check_pattern(self, message) -> bool:
-        return re.match(self.pattern, message.content)
+        return re.search(self.pattern, message.content)
     
     def check_ids(self, message) -> bool:
         return message.id in self.ids
@@ -43,25 +55,70 @@ class Selector:
         return message.created_at.timestamp() <= self.end_date.timestamp()
     
     def match(self, message) -> bool:
+        """Check if the message matches the selector
+
+        Args:
+            message: discord message object
+
+        Returns:
+            bool: True if the message matches the selector, False otherwise
+        """
         return all(check(message) for check in self.check_query)
 
 
-async def get_by_ids(ctx, ids: set[int], **kwargs):
-    for message_id in ids:
-        yield await ctx.channel.fetch_message(message_id)
-
-
 async def get_by_date(ctx, start_date: datetime, end_date: datetime, **kwargs):
+    """
+    Asynchronously fetch messages within a specified date range from the given context's channel.
+
+    Args:
+        ctx: The context object containing information about the invocation.
+        start_date (datetime): The start date and time for the message search.
+        end_date (datetime): The end date and time for the message search.
+        **kwargs: Additional keyword arguments (unused in this function).
+
+    Yields:
+        discord.Message: The fetched message objects within the specified date range, one at a time.
+
+    Note:
+        This function uses the channel's history method to retrieve messages.
+    """
     async for message in ctx.channel.history(after=start_date, before=end_date):
         yield message
 
 
 async def get_all(ctx, **kwargs):
+    """
+    Asynchronously fetch all messages from the given context's channel.
+
+    Args:
+        ctx: The context object containing information about the invocation.
+        **kwargs: Additional keyword arguments (unused in this function).
+
+    Yields:
+        discord.Message: All message objects from the channel's history, one at a time.
+
+    Note:
+        This function uses the channel's history method to retrieve messages.
+    """
     async for message in ctx.channel.history():
         yield message
 
 
-async def get_messages_from_ids(ctx, ids: list[int]):
+async def get_by_ids(ctx, ids: list[int], **kwargs):
+    """
+    Asynchronously fetch messages from the given context's channel using a list of message IDs.
+
+    Args:
+        ctx: The context object containing information about the invocation.
+        ids (list[int]): A list of message IDs to fetch.
+
+    Yields:
+        discord.Message | int: The fetched message objects or the original ID if the message couldn't be fetched.
+
+    Note:
+        This function uses the channel's fetch_message method. If a message cannot be fetched
+        (e.g., due to permissions or the message not existing), the function yields the original ID.
+    """
     for id in ids:
         try:
             yield await ctx.channel.fetch_message(id)
@@ -69,7 +126,7 @@ async def get_messages_from_ids(ctx, ids: list[int]):
             yield id
 
 
-async def get_messages(ctx, pattern: re.Pattern | None, ids: list[int] | None, start_date: datetime | None, end_date: datetime | None):
+async def get_messages(ctx, flags, pattern: re.Pattern | None, ids: list[int] | None, start_date: datetime | None, end_date: datetime | None):
     if ids:
         selector = Selector(pattern=pattern, start_date=start_date, end_date=end_date)
         generator = get_by_ids
@@ -82,6 +139,9 @@ async def get_messages(ctx, pattern: re.Pattern | None, ids: list[int] | None, s
     
     generator = generator(ctx, start_date=start_date, end_date=end_date, ids=ids, pattern=pattern)
     async for message in generator:
+        if isinstance(message, int):
+            await conditional_log(ctx, flags, f"could not fetch message {message}", important=True)
+            continue
         if selector.match(message):
             yield message
 
@@ -100,7 +160,7 @@ modes are:
         "end_date": "",
         "mode": "add",
     },
-    "Usage: select [pattern] [ids] [start_date] [end_date] [remove]",
+    "Usage: `/select [pattern] [ids] [start_date] [end_date] [mode]`",
 )
 async def func(ctx, params: str | None, flags: Flags):
     pattern, ids, start_date, end_date, mode = params
@@ -142,16 +202,16 @@ async def func(ctx, params: str | None, flags: Flags):
         save_selection = False
     if mode == "filter":
         selector = Selector(pattern=pattern, ids=ids, start_date=start_date, end_date=end_date)
-        async for message in get_messages_from_ids(ctx, selected_messages[author]):
+        async for message in get_by_ids(ctx, selected_messages[author]):
             if isinstance(message, int):
                 continue
             if selector.match(message):
                 await ctx.send(f"`{message.id}`\t{format_content(message.content)}")
     elif mode == "view":
-        async for message in get_messages(ctx, pattern, ids, start_date, end_date):
+        async for message in get_messages(ctx, flags, pattern, ids, start_date, end_date):
             await ctx.send(f"`{message.id}`\t{format_content(message.content)}")
     elif mode == "add":
-        async for message in get_messages(ctx, pattern, ids, start_date, end_date):
+        async for message in get_messages(ctx, flags, pattern, ids, start_date, end_date):
             if message.id in selected_messages[author]:
                 continue
             selected_messages[author].append(message.id)
@@ -160,19 +220,16 @@ async def func(ctx, params: str | None, flags: Flags):
     elif mode == "remove":
         selector = Selector(pattern=pattern, ids=ids, start_date=start_date, end_date=end_date)
         new_selection = selected_messages[author].copy()
-        async for message in get_messages_from_ids(ctx, selected_messages[author]):
-            if not selector.match(message):
-                continue
+        async for message in get_by_ids(ctx, selected_messages[author]):
             if isinstance(message, int):
                 new_selection.remove(message)
                 count = count - 1
                 id = message
-            elif message.id in selected_messages[author]:
-                new_selection.remove(message.id)
-                count = count - 1
-                id = message.id
-            else:
+            elif not selector.match(message):
                 continue
+            new_selection.remove(message.id)
+            count = count - 1
+            id = message.id
             await conditional_log(ctx, flags, f"removed message {id}")
         selected_messages[author] = new_selection
     if save_selection:
