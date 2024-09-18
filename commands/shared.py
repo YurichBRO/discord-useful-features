@@ -4,7 +4,47 @@ from parsing import Flags
 from log import conditional_log, log
 from json import dump, load
 
-def command(all_params: dict[str, str], help_message: str):
+"""
+json command structure:
+{
+    "name": "..."
+    ["description": "...",]
+    ["params": {
+        "param1": {
+            "description": "...",
+            "required": True
+            "default": "..."
+        }
+    }]
+}
+"""
+def construct_usage_string(name, params):
+    parts = [f"Usage: /{name} [flags=<flags>]"]
+    for param in params:
+        if params[param]["required"]:
+            parts.append(f"{param}=<{param}>")
+        else:
+            parts.append(f"[{param}=<{param}>]")
+    return ";".join(parts)
+
+
+def construct_help_string(data: dict):
+    name = data["name"]
+    description = data.get("description", "No description provided")
+    params = data.get("params", {})
+    lines = [description]
+    usage = construct_usage_string(name, params)
+    lines.append(usage)
+    lines.append("\nParameters:")
+    for param in params:
+        lines.append(f"    {param}: {params[param]['description']}")
+    return f'```{"\n".join(lines)}```'
+
+
+def command(data: dict):
+    help_message = construct_help_string(data)
+    all_params = data.get("params", {})
+    
     def outer(func):
         async def inner(ctx, params: str | None):
             try:
@@ -29,11 +69,12 @@ def command(all_params: dict[str, str], help_message: str):
             
             for param_name in all_params:
                 if param_name not in params:
-                    if all_params[param_name] is None:
+                    if all_params[param_name]['required']:
                         await log(ctx, f"Missing required param: {param_name}")
                         return
                     # Assigning default value in case the parameter has a default value
-                    params[param_name] = all_params[param_name]
+                    default = all_params[param_name].get('default', "")
+                    params[param_name] = default
             for param_name in params:
                 if param_name not in all_params:
                     await log(ctx, f"Unknown param: {param_name}")

@@ -12,10 +12,12 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-@command({
-    "start_date": "",
-    "end_date": "",
-}, logs['-h'])
+data = {
+    "name": "delete",
+    "description": "Deletes selected messages",
+}
+
+@command(data)
 @uses_selection(SELECTED_MESSAGES_FILE)
 async def func(ctx, params: list, flags: Flags, selected_messages: list[int]):
     for id in selected_messages:

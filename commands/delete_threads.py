@@ -4,10 +4,12 @@ import json
 from .shared import command, uses_selection
 from .select_threads import SELECTED_THREADS_FILE
 
-name = 'delete_threads'
-description = 'Deletes selected threads'
+data = {
+    "name": "delete_threads",
+    "description": "Deletes selected threads",
+}
 
-@command({}, "Usage: `/delete_threads`")
+@command(data)
 @uses_selection(SELECTED_THREADS_FILE)
 async def func(ctx, params: list, flags: Flags, selected_threads: list[int]):
     count = 0

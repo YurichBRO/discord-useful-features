@@ -152,16 +152,35 @@ modes are:
 - view: prints out selector from all messages
 - filter: prints out selector from already selected messages
 """
-@command(
-    {
-        "pattern": "",
-        "ids": "",
-        "start_date": "",
-        "end_date": "",
-        "mode": "add",
-    },
-    "Usage: `/select [pattern] [ids] [start_date] [end_date] [mode]`",
-)
+data = {
+    "name": "select",
+    "description": "Selects messages using pattern, ids, and date range (any combination of these can be used)",
+    "params": {
+        "pattern": {
+            "description": "regex pattern that message content is matched to.",
+            "required": False,
+        },
+        "ids": {
+            "description": "set of ids which the matched message has to be in.",
+            "required": False,
+        },
+        "start_date": {
+            "description": "the date, after which the message creation date is required to be.",
+            "required": False,
+        },
+        "end_date": {
+            "description": "the date, before which the message creation date is required to be.",
+            "required": False,
+        },
+        "mode": {
+            "description": "the mode to select messages in. 'add' to add to the current selection, 'remove' to remove from the current selection, 'filter' to filter within current selection and print filtered messages, 'view' to filter all threads and print filtered messages, 'clear' to clear the current selection.",
+            "required": False,
+            "default": "add"
+        }
+    }
+}
+
+@command(data)
 async def func(ctx, params: str | None, flags: Flags):
     pattern, ids, start_date, end_date, mode = params
 
@@ -195,7 +214,7 @@ async def func(ctx, params: str | None, flags: Flags):
         if author not in selected_messages:
             selected_messages[author] = []
         await conditional_log(ctx, flags, "Loaded selection")
-    if mode in ("add", "remove"):
+    if mode in ("add", "remove", "clear"):
         save_selection = True
         count = 0
     else:
@@ -225,6 +244,7 @@ async def func(ctx, params: str | None, flags: Flags):
                 new_selection.remove(message)
                 count = count - 1
                 id = message
+                continue
             elif not selector.match(message):
                 continue
             new_selection.remove(message.id)
@@ -232,6 +252,9 @@ async def func(ctx, params: str | None, flags: Flags):
             id = message.id
             await conditional_log(ctx, flags, f"removed message {id}")
         selected_messages[author] = new_selection
+    elif mode == "clear":
+        selected_messages[author] = []
+        count = 0
     if save_selection:
         with open(SELECTED_MESSAGES_FILE, 'w') as f:
             dump(selected_messages, f)

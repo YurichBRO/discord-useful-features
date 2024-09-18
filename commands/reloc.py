@@ -12,12 +12,33 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-@command({
-    "thread_name": None,
-    "archive_in": "60",
-    "title": "true",
-    "delete": "false",
-}, logs['-h'])
+data = {
+    "name": "reloc",
+    "description": "Relocates selected messages to a new thread",
+    "params": {
+        "thread_name": {
+            "description": "Name of the new thread",
+            "required": True
+        },
+        "archive_in": {
+            "description": "Time in minutes to archive the thread after",
+            "required": False,
+            "default": "60"
+        },
+        "title": {
+            "description": "Whether to add title to the message or not",
+            "required": False,
+            "default": "true"
+        },
+        "delete": {
+            "description": "Whether to delete the original message or not",
+            "required": False,
+            "default": "false"
+        }
+    }
+}
+
+@command(data)
 @uses_selection(SELECTED_MESSAGES_FILE)
 async def func(ctx, params: list, flags: Flags, selected_messages: list[int]):
     thread_name, archive_in, title, delete = params

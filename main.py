@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from os import getenv
 
 def commandify(bot, module):
-    bot.command(name=module.name, help=module.description)(module.func)
+    bot.command(name=module.data['name'], help=module.data['description'])(module.func)
 
 result = load_dotenv('.env')
 if not result:

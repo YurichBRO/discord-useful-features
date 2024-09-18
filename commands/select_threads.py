@@ -84,16 +84,35 @@ def get_by_ids(ctx, ids: set[int]):
         yield threads.get(i, i)
 
 
-@command(
-    {
-        "pattern": "",
-        "ids": "",
-        "start_date": "",
-        "end_date": "",
-        "mode": "add",
-    },
-    "Usage: `/select_threads [pattern] [ids] [start_date] [end_date] [mode]`\n"
-)
+data = {
+    "name": "select_threads",
+    "description": "Selects threads using pattern, ids, and date range (any combination of these can be used)",
+    "params": {
+        "pattern": {
+            "description": "regex pattern that thread name is matched to.",
+            "required": False,
+        },
+        "ids": {
+            "description": "set of ids which the matched thread has to be in.",
+            "required": False,
+        },
+        "start_date": {
+            "description": "the date, after which the thread creation date is required to be.",
+            "required": False,
+        },
+        "end_date": {
+            "description": "the date, before which the thread creation date is required to be.",
+            "required": False,
+        },
+        "mode": {
+            "description": "the mode to select threads in. 'add' to add to the current selection, 'remove' to remove from the current selection, 'filter' to filter within current selection and print filtered threads, 'view' to filter all threads and print filtered threads, 'clear' to clear the current selection.",
+            "required": False,
+            "default": "add"
+        }
+    }
+}
+
+@command(data)
 async def func(ctx, params: str | None, flags: Flags):
     pattern, ids, start_date, end_date, mode = params
     
@@ -128,7 +147,7 @@ async def func(ctx, params: str | None, flags: Flags):
         if author not in selected_threads:
             selected_threads[author] = []
         await conditional_log(ctx, flags, "Loaded selection")
-    if mode in ("add", "remove"):
+    if mode in ("add", "remove", "clear"):
         save_selection = True
         count = 0
     else:
@@ -162,6 +181,10 @@ async def func(ctx, params: str | None, flags: Flags):
             count += 1
             await conditional_log(ctx, flags, f"removed thread {thread.id}")
         selected_threads[author] = new_selected_threads
+    elif mode == "clear":
+        selected_threads[author] = []
+        count = 0
+        await conditional_log(ctx, flags, f"Cleared selection")
     if save_selection:
         with open(SELECTED_THREADS_FILE, 'w') as f:
             dump(selected_threads, f)

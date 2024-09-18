@@ -10,7 +10,12 @@ params = __data['params']
 description = __data['description']
 logs = __data['logs']
 
-@command({}, logs['-h'])
+data = {
+    "name": "ping",
+    "description": "ping pong",
+}
+
+@command(data)
 async def func(ctx, _: list, flags: Flags):
     await conditional_log(ctx, flags, 'pong', important=True)
     await conditional_log(ctx, flags, 'verbose pong')

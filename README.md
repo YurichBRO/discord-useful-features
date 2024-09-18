@@ -92,3 +92,9 @@ now passed through delete parameter.
 
     added command `/select_threads`, which is analogous to `/select` command, but for threads. The only difference is that it uses thread name instead on message content to match with pattern.
     Now `/delete_threads` command uses selection to delete threads, selection capabilities were delegated to `/select_threads` command.
+
+3.4 - updated help messages and new selection mode
+
+    now help messages are more detailed and contain more information.
+    They are now more consistent and generated automatically from data objects.
+    Added mode=clear to both `select` and `select_threads` commands to clear selection.
