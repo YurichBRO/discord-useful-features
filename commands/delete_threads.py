@@ -1,7 +1,7 @@
 from parsing import Flags
 from log import conditional_log
 import json
-from .shared import command, uses_selection
+from shared import command, uses_selection
 from .select_threads import SELECTED_THREADS_FILE
 
 data = {

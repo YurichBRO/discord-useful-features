@@ -1,7 +1,7 @@
 from parsing import Flags
 from log import conditional_log
 import json
-from .shared import command
+from shared import command
 
 with open('commands/ping.json') as f:
     __data = json.load(f)

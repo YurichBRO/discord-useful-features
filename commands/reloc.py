@@ -1,16 +1,9 @@
 from parsing import Flags
 from log import conditional_log
 import json
-from .shared import command, archive_duration_to_minutes, get_parent, resend_to, uses_selection
+from shared import command, archive_duration_to_minutes, get_parent, resend_to, uses_selection
 from datetime import datetime
 from .select import SELECTED_MESSAGES_FILE
-
-with open('commands/reloc.json') as f:
-    __data = json.load(f)
-name = 'reloc'
-params = __data['params']
-description = __data['description']
-logs = __data['logs']
 
 data = {
     "name": "reloc",
@@ -46,7 +39,7 @@ async def func(ctx, params: list, flags: Flags, selected_messages: list[int]):
     try:
         archive_in = archive_duration_to_minutes(archive_in)
     except:
-        await conditional_log(ctx, flags, logs['invalid-archive-in'], important=True)
+        await conditional_log(ctx, flags, "Invalid archive_in value, should be 60, 1440, 4320, 10080", important=True)
         return
     
     title = title.lower() == "true"
@@ -55,10 +48,10 @@ async def func(ctx, params: list, flags: Flags, selected_messages: list[int]):
     channel = get_parent(ctx.channel)
     if thread_name == "-":
         thread = channel
-        await conditional_log(ctx, flags, logs['using-channel'].format(channel.mention))
+        await conditional_log(ctx, flags, f"Using current channel {channel.mention} as thread.")
     else:
         thread = await channel.create_thread(name=thread_name, auto_archive_duration=archive_in)
-        await conditional_log(ctx, flags, logs['create-thread'].format(thread.mention))
+        await conditional_log(ctx, flags, f"Created thread {thread.mention}.")
 
     # Fetch messages from the channel
     for id in selected_messages:
@@ -68,4 +61,4 @@ async def func(ctx, params: list, flags: Flags, selected_messages: list[int]):
         except:
             await conditional_log(ctx, flags, f"could not fetch message {id}", important=True)
         
-    await conditional_log(ctx, flags, logs['finish'].format(thread.mention))
+    await conditional_log(ctx, flags, f"Messages have been relocated to the new thread: {thread.mention}")

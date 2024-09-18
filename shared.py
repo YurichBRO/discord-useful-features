@@ -4,45 +4,8 @@ from parsing import Flags
 from log import conditional_log, log
 from json import dump, load
 
-"""
-json command structure:
-{
-    "name": "..."
-    ["description": "...",]
-    ["params": {
-        "param1": {
-            "description": "...",
-            "required": True
-            "default": "..."
-        }
-    }]
-}
-"""
-def construct_usage_string(name, params):
-    parts = [f"Usage: /{name} [flags=<flags>]"]
-    for param in params:
-        if params[param]["required"]:
-            parts.append(f"{param}=<{param}>")
-        else:
-            parts.append(f"[{param}=<{param}>]")
-    return ";".join(parts)
-
-
-def construct_help_string(data: dict):
-    name = data["name"]
-    description = data.get("description", "No description provided")
-    params = data.get("params", {})
-    lines = [description]
-    usage = construct_usage_string(name, params)
-    lines.append(usage)
-    lines.append("\nParameters:")
-    for param in params:
-        lines.append(f"    {param}: {params[param]['description']}")
-    return f'```{"\n".join(lines)}```'
-
 
 def command(data: dict):
-    help_message = construct_help_string(data)
     all_params = data.get("params", {})
     
     def outer(func):
@@ -62,10 +25,6 @@ def command(data: dict):
                 await log(ctx, f"Could not parse flags, invalid flags format: {e}")
                 return
             del params["flags"]
-            
-            if flags is not None and flags['help']:
-                await ctx.send(help_message)
-                return
             
             for param_name in all_params:
                 if param_name not in params:

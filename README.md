@@ -11,16 +11,18 @@ The bot uses classic commands, instead of slash ones, although its prefix is a s
 Command syntax is:
 `/command [parameters]`
 
-There are currently 4 commands:
+There are currently 7 commands:
 
 - `select`
 - `delete`
 - `reloc`
 - `ping`
+- `select_threads`
+- `delete_threads`
+- `help`
 
 For more info on the commands, use:
-`/help [command]` - for description and parameters description
-`/command flags=-h` - for usage and notes about the command
+`/help [command]`
 
 ## Flags
 
@@ -28,7 +30,6 @@ All flags are written without spaces or any additional symbols except `-`. Flags
 
 Supported flags:
 
-- `-h` - help (display help message)
 - `-v` - verbose (display additional info and error messages)
 - `-s` - silent (do not display any info or error messages)
 - `-r` - removes selection for commands that use selected messages
@@ -36,9 +37,9 @@ Supported flags:
 Valid flag syntaxes:
 
 - `-` - no flags
-- `-h` - one flag
-- `-h-s` - two flags
-- `-hs` - also two flags, without a delimiter
+- `-r` - one flag
+- `-r-s` - two flags
+- `-rs` - also two flags, without a delimiter
 
 ## Changelog
 
@@ -108,3 +109,8 @@ now passed through delete parameter.
     now help messages are more detailed and contain more information.
     They are now more consistent and generated automatically from data objects.
     Added mode=clear to both `select` and `select_threads` commands to clear selection.
+
+3.5 - changed how help can be obtained
+
+    now help can be obtained by typing `/help` or `/help <command>`
+    removed `-h` flag from commands, as it is not needed anymore

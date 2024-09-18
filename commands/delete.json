@@ -1,8 +1,0 @@
-{
-    "description": "Delete messages from a channel or thread",
-    "params": {},
-    "logs": {
-        "-h": "Usage: `/delete start_date=<start_date>,end_date=<end_date>[,flags=-<flags>]`",
-        "finish": "Messages have been deleted."
-    }
-}

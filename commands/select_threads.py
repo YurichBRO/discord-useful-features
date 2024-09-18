@@ -3,7 +3,7 @@ description = 'select threads using pattern, ids, and date range (any combinatio
 
 import re
 from datetime import datetime
-from .shared import command, format_limited_len
+from shared import command, format_limited_len
 from log import conditional_log
 from parsing import parse_time, parse_flexible_time
 from json import load, dump

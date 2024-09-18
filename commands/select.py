@@ -2,7 +2,7 @@ import re
 from parsing import parse_time, parse_flexible_time
 from datetime import datetime
 from parsing import Flags
-from .shared import command, format_limited_len
+from shared import command, format_limited_len
 from log import conditional_log
 from json import load, dump
 
