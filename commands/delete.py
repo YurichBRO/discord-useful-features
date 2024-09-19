@@ -1,5 +1,4 @@
 from log import conditional_log
-import json
 from parsing import Flags, FORMAT as TIME_FORMAT
 from shared import command, delete_message, uses_selection
 from datetime import datetime

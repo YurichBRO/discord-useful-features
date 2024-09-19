@@ -1,6 +1,5 @@
 from parsing import Flags
 from log import conditional_log
-import json
 from shared import command, archive_duration_to_minutes, get_parent, resend_to, uses_selection
 from datetime import datetime
 from .select import SELECTED_MESSAGES_FILE
