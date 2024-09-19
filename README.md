@@ -97,12 +97,18 @@ now passed through delete parameter.
 
 3.2 - added new selection capabilities
 
-    now there are 4 modes of selection: add, remove, filter and view. Add - adds selector, remove - removes selector, filter - lists out all selected messages that match provided selector, view - list out all messages in the channel that match provided selector.
+    now there are 4 modes of selection: add, remove, filter and view. Add -
+    adds selector, remove - removes selector, filter - lists out all selected
+    messages that match provided selector, view - list out all messages in the
+    channel that match provided selector.
 
 3.3 - new thread operations and selection capability
 
-    added command `/select_threads`, which is analogous to `/select` command, but for threads. The only difference is that it uses thread name instead on message content to match with pattern.
-    Now `/delete_threads` command uses selection to delete threads, selection capabilities were delegated to `/select_threads` command.
+    added command `/select_threads`, which is analogous to `/select` command,
+    but for threads. The only difference is that it uses thread name instead on
+    message content to match with pattern.
+    Now `/delete_threads` command uses selection to delete threads, selection
+    capabilities were delegated to `/select_threads` command.
 
 3.4 - updated help messages and new selection mode
 
